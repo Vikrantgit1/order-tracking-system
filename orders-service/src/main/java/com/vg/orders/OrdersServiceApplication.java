@@ -1,13 +1,13 @@
-package com.vg.tracking.tracking_service;
+package com.vg.orders;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TrackingServiceApplication {
+public class OrdersServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TrackingServiceApplication.class, args);
+		SpringApplication.run(OrdersServiceApplication.class, args);
 	}
 
 }

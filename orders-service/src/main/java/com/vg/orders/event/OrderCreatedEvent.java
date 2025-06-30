@@ -1,4 +1,4 @@
-package com.vg.orders.orders_service.event;
+package com.vg.orders.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

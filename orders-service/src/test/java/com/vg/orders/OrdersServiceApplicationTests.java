@@ -1,10 +1,10 @@
-package com.vg.tracking.tracking_service;
+package com.vg.orders;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TrackingServiceApplicationTests {
+class OrdersServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

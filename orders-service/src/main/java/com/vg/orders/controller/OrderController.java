@@ -1,9 +1,8 @@
-package com.vg.orders.orders_service.controller;
+package com.vg.orders.controller;
 
-import com.vg.orders.orders_service.configuration.KafkaProducerConfig;
-import com.vg.orders.orders_service.event.OrderCreatedEvent;
-import com.vg.orders.orders_service.repository.OrderRepository;
-import com.vg.orders.orders_service.model.Orders;
+import com.vg.orders.event.OrderCreatedEvent;
+import com.vg.orders.repository.OrderRepository;
+import com.vg.orders.model.Orders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

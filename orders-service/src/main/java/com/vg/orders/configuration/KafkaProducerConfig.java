@@ -1,6 +1,6 @@
-package com.vg.orders.orders_service.configuration;
+package com.vg.orders.configuration;
 
-import com.vg.orders.orders_service.event.OrderCreatedEvent;
+import com.vg.orders.event.OrderCreatedEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;

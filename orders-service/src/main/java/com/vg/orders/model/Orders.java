@@ -1,4 +1,4 @@
-package com.vg.orders.orders_service.model;
+package com.vg.orders.model;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,6 +1,6 @@
-package com.vg.orders.orders_service.repository;
+package com.vg.orders.repository;
 
-import com.vg.orders.orders_service.model.Orders;
+import com.vg.orders.model.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderRepository extends JpaRepository<Orders, Long> {
