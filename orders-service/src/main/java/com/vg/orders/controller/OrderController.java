@@ -1,6 +1,7 @@
 package com.vg.orders.controller;
 
 import com.vg.orders.event.OrderCreatedEvent;
+import com.vg.orders.event.OrderUpdatedEvent;
 import com.vg.orders.repository.OrderRepository;
 import com.vg.orders.model.Orders;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/orders")
@@ -19,7 +21,8 @@ public class OrderController {
 
     private final OrderRepository orderRepository;
 
-    @Autowired private KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate;
+    @Autowired private KafkaTemplate<String, OrderCreatedEvent> createdKafkaTemplate;
+    @Autowired private KafkaTemplate<String, OrderUpdatedEvent> updatedKafkaTemplate;
 
     @PostMapping("/createOrder")
     public ResponseEntity<Orders> createOrder(@RequestBody Orders order){
@@ -32,7 +35,7 @@ public class OrderController {
                 savedOrder.getId(), savedOrder.getCustomerName(), savedOrder.getItem(),
                 savedOrder.getQuantity(), savedOrder.getStatus(), savedOrder.getCreatedAt()
         );
-        kafkaTemplate.send("orders", savedOrder.getId().toString(), event);
+        createdKafkaTemplate.send("orders", savedOrder.getId().toString(), event);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
     }
@@ -42,5 +45,25 @@ public class OrderController {
         return orderRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/updateOrderStatus/{id}")
+    public ResponseEntity<Orders> updateOrderStatus(
+            @PathVariable Long id,
+            @RequestParam String status)
+    {
+        Optional<Orders> optionalOrders = orderRepository.findById(id);
+        if(optionalOrders.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        Orders updatedOrder = optionalOrders.get();
+        updatedOrder.setStatus(status);
+        orderRepository.save(updatedOrder);
+
+        //Publish event to Kafka
+        OrderUpdatedEvent orderUpdatedEvent = new OrderUpdatedEvent(id, status, Instant.now());
+        updatedKafkaTemplate.send("order-status-update", updatedOrder.getId().toString(), orderUpdatedEvent);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedOrder);
     }
 }
