@@ -4,8 +4,7 @@ import com.vg.orders.event.OrderCreatedEvent;
 import com.vg.orders.event.OrderUpdatedEvent;
 import com.vg.orders.repository.OrderRepository;
 import com.vg.orders.model.Orders;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -16,13 +15,19 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/orders")
-@RequiredArgsConstructor
 public class OrderController {
 
     private final OrderRepository orderRepository;
+    private final KafkaTemplate<String, Object> createdKafkaTemplate;
+    private final KafkaTemplate<String, Object> updatedKafkaTemplate;
 
-    @Autowired private KafkaTemplate<String, OrderCreatedEvent> createdKafkaTemplate;
-    @Autowired private KafkaTemplate<String, OrderUpdatedEvent> updatedKafkaTemplate;
+    public OrderController(OrderRepository orderRepository,
+                           @Qualifier("orderCreatedTemplate") KafkaTemplate<String, Object> createdKafkaTemplate,
+                           @Qualifier("orderUpdatedTemplate") KafkaTemplate<String, Object> updatedKafkaTemplate) {
+        this.orderRepository = orderRepository;
+        this.createdKafkaTemplate = createdKafkaTemplate;
+        this.updatedKafkaTemplate = updatedKafkaTemplate;
+    }
 
     @PostMapping("/createOrder")
     public ResponseEntity<Orders> createOrder(@RequestBody Orders order){
