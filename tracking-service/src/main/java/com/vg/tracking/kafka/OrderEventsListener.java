@@ -7,6 +7,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+
 @Component
 @RequiredArgsConstructor
 public class OrderEventsListener {
@@ -16,7 +18,7 @@ public class OrderEventsListener {
     @KafkaListener(topics = "orders", groupId = "tracking-service", containerFactory = "orderCreatedKafkaListenerContainerFactory")
     public void handleOrder(OrderCreatedEvent event){
         System.out.println("📩 Received event: " + event);
-        redis.opsForValue().set("order:" + event.getOrderId(), event);
+        redis.opsForValue().set("order:" + event.getOrderId(), event, Duration.ofMinutes(10));
     }
 
     @KafkaListener(topics = "order-status-update", groupId = "tracking-service", containerFactory = "orderUpdatedKafkaListenerContainerFactory")
@@ -28,7 +30,7 @@ public class OrderEventsListener {
 
         if (cached != null) {
             cached.setStatus(event.getStatus());
-            redis.opsForValue().set(key, cached);
+            redis.opsForValue().set(key, cached, Duration.ofMinutes(10));
             System.out.println("✅ Redis updated with new status: " + event.getStatus());
         } else {
             System.out.println("⚠️ Order not found in Redis for ID: " + event.getOrderId());
