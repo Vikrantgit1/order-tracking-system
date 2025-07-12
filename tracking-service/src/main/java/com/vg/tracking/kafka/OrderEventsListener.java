@@ -13,17 +13,17 @@ public class OrderEventsListener {
 
     private final RedisTemplate<String, OrderCreatedEvent> redis;
 
-    @KafkaListener(topics = "orders", groupId = "tracking-service")
+    @KafkaListener(topics = "orders", groupId = "tracking-service", containerFactory = "orderCreatedKafkaListenerContainerFactory")
     public void handleOrder(OrderCreatedEvent event){
         System.out.println("📩 Received event: " + event);
         redis.opsForValue().set("order:" + event.getOrderId(), event);
     }
 
-    @KafkaListener(topics = "order-status-update", groupId = "tracking-service")
+    @KafkaListener(topics = "order-status-update", groupId = "tracking-service", containerFactory = "orderUpdatedKafkaListenerContainerFactory")
     public void handleStatusUpdate(OrderUpdatedEvent event){
         System.out.println("🔁 Status updated: " + event);
 
-        String key = "orderId:"+event.getOrderId();
+        String key = "order:"+event.getOrderId();
         OrderCreatedEvent cached = redis.opsForValue().get(key);
 
         if (cached != null) {

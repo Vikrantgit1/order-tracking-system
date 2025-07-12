@@ -29,7 +29,7 @@ public class OrderController {
         this.updatedKafkaTemplate = updatedKafkaTemplate;
     }
 
-    @PostMapping("/createOrder")
+    @PostMapping("/")
     public ResponseEntity<Orders> createOrder(@RequestBody Orders order){
         order.setStatus("PENDING");
         order.setCreatedAt(Instant.now());

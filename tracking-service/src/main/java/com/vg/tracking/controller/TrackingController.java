@@ -16,7 +16,7 @@ public class TrackingController {
 
     private final RedisTemplate<String, OrderCreatedEvent> redis;
 
-    @GetMapping("/track/{orderId}")
+    @GetMapping("/{orderId}")
     public ResponseEntity<OrderCreatedEvent> trackOrder(@PathVariable Long orderId){
         System.out.println("Controller hit with id : "+orderId);
         OrderCreatedEvent event = redis.opsForValue().get("order:" + orderId);
