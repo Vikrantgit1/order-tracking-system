@@ -1,4 +1,4 @@
-package com.vg.notifications.notifications_service;
+package com.vg.notifications;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
