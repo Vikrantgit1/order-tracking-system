@@ -2,6 +2,7 @@ package com.vg.orders.service;
 
 import com.vg.orders.event.OrderCreatedEvent;
 import com.vg.orders.event.OrderUpdatedEvent;
+import com.vg.orders.exception.OrderNotFoundException;
 import com.vg.orders.model.Orders;
 import com.vg.orders.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +31,10 @@ public class OrderService {
 
 
     public ResponseEntity<Orders> createOrder(Orders order) {
+        if (order.getCustomerName() == null || order.getItem() == null) {
+            throw new IllegalArgumentException("Customer name and item are required.");
+        }
+
         order.setStatus("PENDING");
         order.setCreatedAt(Instant.now());
         Orders savedOrder = orderRepository.save(order);
@@ -47,13 +52,13 @@ public class OrderService {
     public ResponseEntity<Orders> fetchOrder(Long id) {
         return orderRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new OrderNotFoundException(id));
     }
 
     public ResponseEntity<Orders> updateOrderStatus(Long id, String status) {
         Optional<Orders> optionalOrders = orderRepository.findById(id);
         if(optionalOrders.isEmpty()){
-            return ResponseEntity.notFound().build();
+            throw new OrderNotFoundException(id);
         }
         Orders updatedOrder = optionalOrders.get();
         updatedOrder.setStatus(status);

@@ -1,7 +1,7 @@
 package com.vg.orders.exception;
 
 public class OrderNotFoundException extends RuntimeException{
-    public OrderNotFoundException(String message) {
-        super(message);
+    public OrderNotFoundException(Long id) {
+        super("The order with id: " + id + " doesn't exist");
     }
 }
