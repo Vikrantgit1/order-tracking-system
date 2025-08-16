@@ -1,4 +1,4 @@
-package com.vg.orders.configuration;
+package com.vg.orders.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

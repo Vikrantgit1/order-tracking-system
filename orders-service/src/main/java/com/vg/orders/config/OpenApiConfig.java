@@ -1,4 +1,4 @@
-package com.vg.orders.configuration;
+package com.vg.orders.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
