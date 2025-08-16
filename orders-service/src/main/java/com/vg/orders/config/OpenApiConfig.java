@@ -12,7 +12,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(
                 new Info()
-                        .title("Order Tracking System API")
+                        .title("Order Tracking System - Order APIs")
                         .version("1.0.0")
                         .description("API documentation for the Order Tracking System")
         );
