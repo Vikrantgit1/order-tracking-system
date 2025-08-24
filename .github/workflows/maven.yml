@@ -56,5 +56,17 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
-    - name: Build & Run Tests
-      run: mvn clean test -B
+    - name: Build & Test Orders Service
+      run: |
+        cd orders-service
+        mvn clean test -B
+
+    - name: Build & Test Tracking Service
+      run: |
+        cd tracking-service
+        mvn clean test -B
+
+    - name: Build & Test Notification Service
+      run: |
+        cd notification-service
+        mvn clean test -B
