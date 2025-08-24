@@ -1,32 +1,60 @@
-name: Java CI with Maven
+name: Java CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: orders
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U user"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      kafka:
+        image: bitnami/kafka:3.7
+        env:
+          KAFKA_CFG_BROKER_ID: 1
+          KAFKA_CFG_ZOOKEEPER_CONNECT: localhost:2181
+          ALLOW_PLAINTEXT_LISTENER: "yes"
+        ports:
+          - 9092:9092
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: temurin
 
-      - name: Build orders-service
-        working-directory: ./orders-service
-        run: mvn -B clean verify
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
 
-      - name: Build tracking-service
-        working-directory: ./tracking-service
-        run: mvn -B clean verify
-
-      - name: Build notification-service
-        working-directory: ./notification-service
-        run: mvn -B clean verify
+    - name: Build & Run Tests
+      run: mvn clean test -B
