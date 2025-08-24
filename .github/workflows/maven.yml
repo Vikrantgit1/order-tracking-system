@@ -68,5 +68,5 @@ jobs:
 
     - name: Build & Test Notification Service
       run: |
-        cd notification-service
+        cd notifications-service
         mvn clean test -B
