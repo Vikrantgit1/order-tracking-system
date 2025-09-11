@@ -12,6 +12,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -69,5 +70,11 @@ public class OrderService {
         updatedKafkaTemplate.send("order-status-update", updatedOrder.getId().toString(), orderUpdatedEvent);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedOrder);
+    }
+
+    public List<Orders> fetchAllOrders(Long id, String customerName, String item, String status) {
+        return orderRepository.findAllWithFilters(
+                id, customerName, item, status
+        );
     }
 }

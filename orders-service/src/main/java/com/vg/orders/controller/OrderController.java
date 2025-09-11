@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/orders")
 @Tag(name = "Order Controller", description = "APIs for managing orders")
@@ -84,5 +86,29 @@ public class OrderController {
             @PathVariable Long id,
             @RequestParam String status) {
         return orderService.updateOrderStatus(id, status);
+    }
+
+    @GetMapping("/fetchAllOrders")
+    @Operation(
+            summary = "Fetch all the available orders",
+            description = "Fetch all the available orders as per the given filters"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Orders found",
+            content = @Content(mediaType = "application/json")
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Orders not found",
+            content = @Content
+    )
+    public ResponseEntity<List<Orders>> fetchAllOrders(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String customerName,
+            @RequestParam(required = false) String item,
+            @RequestParam(required = false) String status
+    ){
+        return ResponseEntity.ok(orderService.fetchAllOrders(id, customerName, item, status));
     }
 }
